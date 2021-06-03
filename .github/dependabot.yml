@@ -1,7 +1,33 @@
-version: 2
-updates:
-- package-ecosystem: npm
-  directory: "/"
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 20
+name: Hexo Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    if: github.event.repository.owner.id == github.event.sender.id
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v2
+        with:
+          ref: master
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '15'
+
+      - name: Setup Hexo
+        run: |
+          npm install hexo-cli -g
+          npm install
+
+      - name: Deploy
+        run: |
+          hexo clean
+          hexo generate
+          cat < ls -l 
