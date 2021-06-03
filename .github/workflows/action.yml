@@ -30,4 +30,5 @@ jobs:
         run: |
           hexo clean
           hexo generate
-          cat < ls -l 
+          mv public _site
+          bash .github/workflows/
