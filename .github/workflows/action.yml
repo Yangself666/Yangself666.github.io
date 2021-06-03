@@ -31,4 +31,4 @@ jobs:
           hexo clean
           hexo generate
           mv public _site
-          bash .github/workflows/
+          bash .github/workflows/deploy.sh
