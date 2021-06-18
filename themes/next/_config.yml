@@ -201,7 +201,7 @@ links_settings:
   layout: block
 
 links:
-  #Title: http://yoursite.com
+  设计模式: https://refactoringguru.cn/design-patterns
 
 # Table of Contents in the Sidebar
 # Front-matter variable (unsupport wrap expand_all).
