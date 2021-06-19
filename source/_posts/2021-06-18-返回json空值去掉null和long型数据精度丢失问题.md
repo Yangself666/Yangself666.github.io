@@ -16,6 +16,15 @@ tags: [Java]
 防止Long型数据丢失精度
 
 <!-- more -->
+```java
+在实体类的IDLong型字段上加上以下注解
+
+fastjson
+@JSONField(serializeUsing= ToStringSerializer.class)//貌似不行
+
+jackson
+@JsonSerialize(using = ToStringSerializer.class)
+```
 
 ```java
  /**
