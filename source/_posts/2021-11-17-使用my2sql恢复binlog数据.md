@@ -1,20 +1,48 @@
 ---
 title: Harbor仓库主从同步
 author: Yangself
-date: 2021-11-17 15:42:00 +0800
-categories: [解决方案, 数据库]
-tags: [数据库]
+date: 2021-11-18 09:28:00 +0800
+categories: [解决方案, Java]
+tags: [Java]
 ---
 
-[Github项目路径](https://github.com/liuhr/my2sql)
+## 使用Maven进行打jar包的pom.xml文件配置
 
-[我的Gitee保存的项目路径](https://gitee.com/Yangself/my2sql)
-
-```shell
-# 通过本地文件读取binlog生成sql文件
-./my2sql -mode file -local-binlog-file ./mysql-bin.000030 -start-file mysql-bin.000030 -work-type rollback -user root -password 123456 -port 3306 -host 127.0.0.1 -databases hwzxoa -tables briefing -output-dir ./sql2/
-
-# 使用运行中的数据库读取binlog文件
-./my2sql -start-file mysql-bin.000030 -work-type rollback -user root -password 123456 -port 3306 -host 127.0.0.1 -databases hwzxoa -tables briefing -output-dir ./sql2/
+```xml
+<build>
+      <plugins>
+        <plugin>
+          <!-- NOTE: 不须要设置groupId,由于默认为org.apache.maven.plugins -->
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>3.2.0</version>
+          <configuration>
+            <descriptorRefs>
+              <descriptorRef>jar-with-dependencies</descriptorRef>
+            </descriptorRefs>
+            <!-- 指定jar包名称，需appendAssemblyId和finalName配合使用 -->
+            <appendAssemblyId>false</appendAssemblyId>
+            <finalName>${project.artifactId}-full</finalName>
+            <archive>
+              <manifest>
+                <!-- 设置主类-->
+                <mainClass>tech.nosql.MainTask</mainClass>
+                <!-- 将版本信息写入MANIFEST.MF -->
+                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+              </manifest>
+            </archive>
+          </configuration>
+          <executions>
+            <execution>
+              <!-- this is used for inheritance merges -->
+              <id>make-assembly</id>
+              <!-- 将assembly绑定到package阶段 -->
+              <phase>package</phase>
+              <goals>
+                <goal>single</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+  </build>
 ```
-
