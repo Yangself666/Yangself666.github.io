@@ -1,5 +1,5 @@
 ---
-title: Harbor仓库主从同步
+title: 使用Maven进行打jar包的pom.xml文件配置
 author: Yangself
 date: 2021-11-18 09:28:00 +0800
 categories: [解决方案, Java]
