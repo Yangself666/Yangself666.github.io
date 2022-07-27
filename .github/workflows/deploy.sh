@@ -19,7 +19,7 @@ init() {
     _no_branch=true
     git checkout -b "$PAGES_BRANCH"
   else
-    git checkout "$PAGES_BRANCH"
+    git checkout -f "$PAGES_BRANCH"
   fi
 }
 
@@ -47,7 +47,7 @@ deploy() {
   git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
   git update-ref -d HEAD
-  git add .
+  git add -A
   git commit -m "[Automation] Site update No.${GITHUB_RUN_NUMBER}"
 
   if $_no_branch; then
