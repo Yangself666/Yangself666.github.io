@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yangself666.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="介绍什么是shell脚本（需要解释器解释） 系统命令的堆积 特定的语法+系统的命令&#x3D;文件 不会手动搭建或者执行某些程序，那么一定学不会shell  shell脚本能做什么基于标准化之上的 -&gt; 工具化 作用：简化操作步骤，提高工作效率，减少人为干扰，减少故障">
+<meta property="og:type" content="article">
+<meta property="og:title" content="学习Shell脚本">
+<meta property="og:url" content="https://yangself666.github.io/2021/05/31/2021-06-01-%E5%AD%A6%E4%B9%A0Shell%E8%84%9A%E6%9C%AC/index.html">
+<meta property="og:site_name" content="扬仔的杂货铺">
+<meta property="og:description" content="介绍什么是shell脚本（需要解释器解释） 系统命令的堆积 特定的语法+系统的命令&#x3D;文件 不会手动搭建或者执行某些程序，那么一定学不会shell  shell脚本能做什么基于标准化之上的 -&gt; 工具化 作用：简化操作步骤，提高工作效率，减少人为干扰，减少故障">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-05-31T19:38:00.000Z">
+<meta property="article:modified_time" content="2022-10-20T12:02:40.832Z">
+<meta property="article:author" content="Yangself">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://yangself666.github.io/2021/05/31/2021-06-01-%E5%AD%A6%E4%B9%A0Shell%E8%84%9A%E6%9C%AC/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>学习Shell脚本 | 扬仔的杂货铺</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">扬仔的杂货铺</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">分享微不足道的经验，记录稀奇古怪的玩意</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yangself666.github.io/2021/05/31/2021-06-01-%E5%AD%A6%E4%B9%A0Shell%E8%84%9A%E6%9C%AC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Yangself">
+      <meta itemprop="description" content="分享微不足道的经验，记录稀奇古怪的玩意">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="扬仔的杂货铺">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          学习Shell脚本
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-06-01 03:38:00" itemprop="dateCreated datePublished" datetime="2021-06-01T03:38:00+08:00">2021-06-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-10-20 20:02:40" itemprop="dateModified" datetime="2022-10-20T20:02:40+08:00">2022-10-20</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">学习</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><h3 id="什么是shell脚本（需要解释器解释）"><a href="#什么是shell脚本（需要解释器解释）" class="headerlink" title="什么是shell脚本（需要解释器解释）"></a>什么是shell脚本（需要解释器解释）</h3><ol>
+<li>系统命令的堆积</li>
+<li>特定的语法+系统的命令=文件</li>
+<li>不会手动搭建或者执行某些程序，那么一定学不会shell</li>
+</ol>
+<h3 id="shell脚本能做什么"><a href="#shell脚本能做什么" class="headerlink" title="shell脚本能做什么"></a>shell脚本能做什么</h3><p>基于标准化之上的 -&gt; 工具化</p>
+<p><strong>作用</strong>：简化操作步骤，提高工作效率，减少人为干扰，减少故障</p>
+<span id="more"></span>
+
+<ol>
+<li><p>自动化的完成基础配置</p>
+<p> （系统初始化操作、系统更新、内核调整、网络、时区、SSH优化）</p>
+</li>
+<li><p>自动化安装程序</p>
+<p> （自动化安装LNMP、LAMP、MySQL、Nginx、Redis）</p>
+</li>
+<li><p>自动化调整配置文件<br> （Nginx Conf、MySQL Conf）</p>
+</li>
+<li><p>自动化部署业务</p>
+<p> 部署php、java、秒级回退</p>
+</li>
+<li><p>自动化定期备份恢复程序</p>
+<p> （MySQL全备 + 增量 + binlog + crond + shell脚本）</p>
+</li>
+<li><p>自动化信息的采集（Zabbix + shell）</p>
+<p> 硬件、系统、服务、网络信息等等</p>
+</li>
+<li><p>自动化日志收集（ELK）</p>
+<p> 收集 -&gt; 存储 -&gt; 展示 -&gt; 分析<br> 日志分析（取值 -&gt; 排序 -&gt; 去重 -&gt;统计 -&gt; 分析）</p>
+</li>
+<li><p>自动化扩容/缩容（Zabbix + shell）</p>
+<p> 监控服务器，如果发现cpu持续80% + 触发动作（脚本）<br> 脚本：调用api开通云主机 -&gt; 初始化环境 -&gt; 加入集群 -&gt; 对外提供</p>
+<p> 当前cpu使用率20% -&gt; 判断有多少web节点 -&gt; 判断是否超过预设 -&gt; 缩减到对应的预设状态 -&gt; 变更负载的配置</p>
+</li>
+<li><p>shell什么都能做，但要符合实际情况以及实际业务需求</p>
+</li>
+</ol>
+<h3 id="shell技能"><a href="#shell技能" class="headerlink" title="shell技能"></a>shell技能</h3><ul>
+<li><p>变量</p>
+<ul>
+<li>自定义变量</li>
+<li>系统环境变量</li>
+<li>预先定义变量</li>
+<li>位置参数变量</li>
+</ul>
+</li>
+<li><p>条件判断</p>
+<p>  if、else</p>
+</li>
+<li><p>循环语句</p>
+<p>  for、while</p>
+</li>
+<li><p>流程控制</p>
+<p>  case</p>
+</li>
+<li><p>函数</p>
+<p>  function</p>
+</li>
+<li><p>数组</p>
+<p>  array</p>
+</li>
+<li><p>正则表达式</p>
+</li>
+</ul>
+<h2 id="shell脚本概述"><a href="#shell脚本概述" class="headerlink" title="shell脚本概述"></a>shell脚本概述</h2><h3 id="脚本的基本格式"><a href="#脚本的基本格式" class="headerlink" title="脚本的基本格式"></a>脚本的基本格式</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment">#上面是这里指定使用的解释器，必须写在第一行</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#下面编写相应的脚本</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Hello world&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>运行脚本：</strong></p>
+<ol>
+<li><p>赋予文件权限</p>
+</li>
+<li><p>直接执行脚本</p>
+</li>
+</ol>
+<h3 id="脚本的执行方式"><a href="#脚本的执行方式" class="headerlink" title="脚本的执行方式"></a>脚本的执行方式</h3><ol>
+<li><p>使用对应的解释器执行</p>
+<p> <code>bash 文件</code></p>
+<blockquote>
+<p>如果脚本文件名为test，那么执行的方式为</p>
+<p><code>bash test</code><br>或<code>sh test</code></p>
+<p>抑或是使用其他的脚本解析器</p>
+</blockquote>
+</li>
+<li><p>直接执行文件</p>
+<p> 如果想要直接执行脚本文件，需要先添加执行权限，并且需要在脚本的开头添加<code>#!解释器路径</code>（例如：<code>#!/bin/bash</code>）来声明对应的解释器，否则默认使用bash来执行脚本。</p>
+<blockquote>
+<p>如果脚本文件名为test，那么执行的方式为<code>./test</code></p>
+</blockquote>
+</li>
+</ol>
+<h3 id="shell脚本的特性"><a href="#shell脚本的特性" class="headerlink" title="shell脚本的特性"></a>shell脚本的特性</h3><p><strong><code>bash shell</code>特性</strong></p>
+<ol>
+<li><p>命令补全和文件路径补全，如果写错无法补全 -&gt; <code>tab</code></p>
+</li>
+<li><p>命令历史记忆功能，查看执行的历史 -&gt; <code>history</code></p>
+</li>
+<li><p>别名功能，查看当前shell的别名 -&gt; <code>alias</code>、<code>unalias</code></p>
+</li>
+<li><p>常用快捷键</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ctrl + u</code></td>
+<td>剪切光标到行首的所有字符</td>
+</tr>
+<tr>
+<td><code>ctrl + k</code></td>
+<td>剪切光标到行尾的所有字符</td>
+</tr>
+<tr>
+<td><code>ctrl + y</code></td>
+<td>粘贴<code>ctrl + u</code>和<code>ctrl + k</code>剪切的字符</td>
+</tr>
+<tr>
+<td><code>ctrl + a</code></td>
+<td>光标回到行首</td>
+</tr>
+<tr>
+<td><code>ctrl + e</code></td>
+<td>光标回到行尾</td>
+</tr>
+<tr>
+<td><code>ctrl + l</code></td>
+<td>清除屏幕所有的内容，并开启新的一行</td>
+</tr>
+<tr>
+<td><code>ctrl + c</code></td>
+<td>中断正在执行的任务并开启新的一行</td>
+</tr>
+<tr>
+<td><code>ctrl + z</code></td>
+<td>将前台进程挂在后台</td>
+</tr>
+<tr>
+<td><code>ctrl + d</code></td>
+<td>推出当前shell命令行，如果是切换过来的用户，则执行这个命令回退原用户</td>
+</tr>
+<tr>
+<td><code>ctrl + r</code></td>
+<td>搜索命令行使用过的历史命令记录</td>
+</tr>
+<tr>
+<td><code>ctrl + g</code></td>
+<td>从<code>ctrl + r</code>搜索历史命令行的模式中退出</td>
+</tr>
+<tr>
+<td><code>ctrl + s</code></td>
+<td>锁定终端</td>
+</tr>
+<tr>
+<td><code>ctrl + q</code></td>
+<td>解除锁定终端</td>
+</tr>
+<tr>
+<td><code>ctrl + z</code></td>
+<td>暂停在终端运行的任务，使用<code>fg</code>命令可以使暂停恢复</td>
+</tr>
+<tr>
+<td><code>!!</code></td>
+<td>执行上一条命令</td>
+</tr>
+<tr>
+<td><code>!pw</code></td>
+<td>这是一个例子，是执行以pw开头的命令，这里的pw可以换成任何已经执行过的字符</td>
+</tr>
+<tr>
+<td><code>!pw:p</code></td>
+<td>这是一个例子，是仅打印以pw开头的命令，<code>:p</code>是固定字符</td>
+</tr>
+<tr>
+<td><code>!num</code></td>
+<td>执行历史命令列表的第num条命令，num代指任何数字（前提是历史命令里必须存在）</td>
+</tr>
+<tr>
+<td><code>!$</code></td>
+<td>代指上一条命令的最后一个参数，该命令常用与shell脚本中</td>
+</tr>
+<tr>
+<td><code>esc + .</code></td>
+<td>获取上一条命令的（以空格为分隔符）最后的部分</td>
+</tr>
+<tr>
+<td><code>esc + b</code></td>
+<td>移动到当前单词的开头</td>
+</tr>
+<tr>
+<td><code>esc + f</code></td>
+<td>移动到当前单词的结尾</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>前后台作业控制bg,fg,jobs,screen</p>
+</li>
+<li><p>输入输出重定向</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>command &gt;file</code>或<code>command 1&gt;file</code></td>
+<td>以<strong>覆盖</strong>的方式，把command的输出的<strong>正确</strong>结果输出到file中</td>
+</tr>
+<tr>
+<td><code>command &gt;&gt;file</code>或<code>command 1&gt;&gt;file</code></td>
+<td>以<strong>追加</strong>的方式，把command的输出的<strong>正确</strong>结果输出到file中</td>
+</tr>
+<tr>
+<td><code>command 2&gt;file</code></td>
+<td>以<strong>覆盖</strong>的方式，把command的输出的<strong>错误</strong>结果输出到file中</td>
+</tr>
+<tr>
+<td><code>command 2&gt;&gt;file</code></td>
+<td>以<strong>追加</strong>的方式，把command的输出的<strong>错误</strong>结果输出到file中</td>
+</tr>
+<tr>
+<td><code>command &gt;file 2&gt;&amp;1</code></td>
+<td>以<strong>覆盖</strong>的方式，把command的输出的<strong>所有</strong>结果输出到file中</td>
+</tr>
+<tr>
+<td><code>command &gt;&gt;file 2&gt;&amp;1</code></td>
+<td>以<strong>追加</strong>的方式，把command的输出的<strong>所有</strong>结果输出到file中</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>管道</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>|</code></td>
+<td>将前者命令的标准输出交给后者命令的输入</td>
+</tr>
+<tr>
+<td><code>tee</code></td>
+<td>把当前管道的内容保存下来</td>
+</tr>
+</tbody></table>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#例如</span></span><br><span class="line"><span class="built_in">cat</span> /etc/hosts | grep <span class="built_in">local</span> | <span class="built_in">tee</span> (-a) test.txt</span><br></pre></td></tr></table></figure></li>
+<li><p>命令排序</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>;</code></td>
+<td>命令没有逻辑关系，无论分号前面的命令执行是否成功都执行后者命令</td>
+</tr>
+<tr>
+<td><code>&amp;&amp;</code></td>
+<td>只有前面的命令执行成功，才会执行后面的命令</td>
+</tr>
+<tr>
+<td><code>||</code></td>
+<td>如果前面的命令执行成功，就不执行后面的命令</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>shell通配符</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>*</code></td>
+<td>匹配任意多个字符</td>
+</tr>
+<tr>
+<td><code>?</code></td>
+<td>匹配任意一个字符</td>
+</tr>
+<tr>
+<td><code>[]</code></td>
+<td>匹配括号中任意一个字符（a-z,0-9,A-Z,a-Z）</td>
+</tr>
+<tr>
+<td><code>()</code></td>
+<td>在子shell中执行，不影响当前shell</td>
+</tr>
+<tr>
+<td><code>&#123;&#125;</code></td>
+<td>集合，（例如<code>touch file&#123;1..9&#125;</code>）</td>
+</tr>
+<tr>
+<td><code>\</code></td>
+<td>转义符</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>echo输出颜色、printf格式化输出文本</p>
+</li>
+</ol>
+<h2 id="shell脚本变量"><a href="#shell脚本变量" class="headerlink" title="shell脚本变量"></a>shell脚本变量</h2><p>简单的理解变量：用一个固定的<strong>字符串</strong>去表示不固定的内容</p>
+<h3 id="变量常见类型"><a href="#变量常见类型" class="headerlink" title="变量常见类型"></a>变量常见类型</h3><h4 id="自定义变量"><a href="#自定义变量" class="headerlink" title="自定义变量"></a>自定义变量</h4><ol>
+<li><p>定义变量</p>
+<p> <code>变量名=变量值</code></p>
+<p> 不允许数字命名，不能使用横杠命名</p>
+</li>
+<li><p>引用变量</p>
+<p> <code>$变量名</code>或<code>$&#123;变量名&#125;</code></p>
+</li>
+<li><p>查看变量</p>
+<p> <code>echo $变量名</code></p>
+<p> <code>set</code>显示所有变量，包括自定义变量和环境变量</p>
+</li>
+<li><p>取消变量</p>
+<p> <code>unset 变量名</code></p>
+</li>
+<li><p>作用范围</p>
+<p> 仅在当前shell中有效</p>
+</li>
+</ol>
+<h4 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h4><ol>
+<li><p>定义环境变量</p>
+<p> <code>export 变量名=变量值</code>或者先定义自定义变量，然后使用<code>export 自定义变量名</code>将其转换成环境变量</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> ip=1.1.1.1</span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$ip</span>    <span class="comment">#得到结果 1.1.1.1</span></span><br></pre></td></tr></table></figure></li>
+<li><p>引用环境变量</p>
+<p> <code>$变量名</code>或<code>$&#123;变量名&#125;</code></p>
+</li>
+<li><p>查看环境变量</p>
+<p> <code>env</code> 可以查看所有的环境变量</p>
+<p> <code>set</code>显示所有变量，包括自定义变量和环境变量</p>
+</li>
+<li><p>取消变量</p>
+<p> <code>unset 变量名</code></p>
+</li>
+<li><p>作用范围</p>
+<p> 在当前shell和子shell有效</p>
+</li>
+</ol>
+<h4 id="位置参数变量"><a href="#位置参数变量" class="headerlink" title="位置参数变量"></a>位置参数变量</h4><p>脚本参数传参：<code>$1</code>、<code>$2</code>、<code>$3</code>、<code>$4</code>、<code>$5</code>、<code>$6</code>、<code>$7</code>、<code>$8</code>、<code>$9</code>、<code>$&#123;10&#125;</code></p>
+<p>根据脚本后面的参数来确定对应数字变量的值</p>
+<h4 id="预先定义变量"><a href="#预先定义变量" class="headerlink" title="预先定义变量"></a>预先定义变量</h4><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>$0</code></td>
+<td>脚本名</td>
+</tr>
+<tr>
+<td><code>$*</code></td>
+<td>所有的参数(用一对引号，例如：”1 2 3”)</td>
+</tr>
+<tr>
+<td><code>$@</code></td>
+<td>所有的参数(分别使用引号，例如：”1” “2” “3”)</td>
+</tr>
+<tr>
+<td><code>$#</code></td>
+<td>参数的个数</td>
+</tr>
+<tr>
+<td><code>$$</code></td>
+<td>当前进程的PID</td>
+</tr>
+<tr>
+<td><code>$!</code></td>
+<td>上一个后台进程的PID</td>
+</tr>
+<tr>
+<td><code>$?</code></td>
+<td>上一个命令的返回值(0表示成功)</td>
+</tr>
+</tbody></table>
+<h3 id="变量赋值方式"><a href="#变量赋值方式" class="headerlink" title="变量赋值方式"></a>变量赋值方式</h3><h4 id="显式赋值（变量名-变量值）"><a href="#显式赋值（变量名-变量值）" class="headerlink" title="显式赋值（变量名=变量值）"></a>显式赋值（变量名=变量值）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ip=192.168.1.1</span><br><span class="line">name=<span class="string">&quot;Yangself&quot;</span></span><br><span class="line">today1=`<span class="built_in">date</span> +%F`</span><br><span class="line">today2=$(<span class="built_in">date</span> +%F)</span><br></pre></td></tr></table></figure>
+
+<h4 id="read从键盘读入变量值"><a href="#read从键盘读入变量值" class="headerlink" title="read从键盘读入变量值"></a><code>read</code>从键盘读入变量值</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">read</span> -p <span class="string">&quot;输入的提示：&quot;</span> param</span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$param</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h4><ol>
+<li><p>定义或引用变量时注意引号的问题：<code>&quot;&quot;</code>弱引用、<code>&#39;&#39;</code>强引用</p>
+<p> 变量的解析使用双引号<br> 如果想要输出特殊字符，可以使用单引号</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">➜ <span class="built_in">echo</span> <span class="string">&quot;hello <span class="variable">$hello</span>&quot;</span></span><br><span class="line">hello world</span><br><span class="line">➜ <span class="built_in">echo</span> <span class="string">&#x27;hello $hello&#x27;</span></span><br><span class="line">hello <span class="variable">$hello</span></span><br></pre></td></tr></table></figure></li>
+<li><p>``命令替换等价于<code>$&#123;&#125;</code>，反引号中的shell命令会被先执行</p>
+</li>
+</ol>
+<h3 id="变量数值运算"><a href="#变量数值运算" class="headerlink" title="变量数值运算"></a>变量数值运算</h3><h4 id="整数运算"><a href="#整数运算" class="headerlink" title="整数运算"></a>整数运算</h4><ol>
+<li><p>expr</p>
+<p> <code>expr 数值 运算符号 数值</code></p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">➜ <span class="built_in">expr</span> 1 + 1</span><br><span class="line">2</span><br><span class="line"></span><br><span class="line">➜ a=1               </span><br><span class="line">➜ b=2</span><br><span class="line">➜ <span class="built_in">expr</span> <span class="variable">$a</span> + <span class="variable">$b</span></span><br><span class="line">3</span><br></pre></td></tr></table></figure></li>
+<li><p><code>$(())</code></p>
+<p> <code>$((运算式))</code></p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">➜ <span class="built_in">echo</span> $((<span class="number">2</span>+<span class="number">4</span>)) </span><br><span class="line">6</span><br><span class="line"><span class="comment"># ** 代表乘方 ^</span></span><br><span class="line">➜ <span class="built_in">echo</span> $((<span class="number">2</span>**<span class="number">4</span>))</span><br><span class="line">16</span><br></pre></td></tr></table></figure></li>
+<li><p><code>$[]</code></p>
+<p> <code>$[运算式]</code></p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">➜ <span class="built_in">echo</span> $[2+4]</span><br><span class="line">6</span><br><span class="line"><span class="comment"># ** 代表乘方 ^</span></span><br><span class="line">➜ <span class="built_in">echo</span> $[2**4]</span><br><span class="line">16</span><br></pre></td></tr></table></figure></li>
+<li><p>let</p>
+<p> <code>let 变量名=运算式</code></p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">➜ <span class="built_in">let</span> result=2+3</span><br><span class="line">➜ <span class="built_in">echo</span> <span class="variable">$result</span></span><br><span class="line">5</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="小数运算bc"><a href="#小数运算bc" class="headerlink" title="小数运算bc"></a>小数运算<code>bc</code></h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;scale=2;6/4&quot;</span> | bc</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;print 5.0/2&quot;</span> | python</span><br></pre></td></tr></table></figure>
+
+<h3 id="变量替代"><a href="#变量替代" class="headerlink" title="变量替代"></a>变量替代</h3><p><code>$&#123;变量名-新的变量值&#125;</code>或者<code>$&#123;变量名:-新的变量值&#125;</code></p>
+<p>变量没有被赋值：会使用“新的变量值”替代</p>
+<p>变量有被赋值（包括空值）：不会被替代</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">➜ hello=world</span><br><span class="line">➜ <span class="built_in">echo</span> <span class="variable">$hello</span></span><br><span class="line">world</span><br><span class="line">➜ <span class="built_in">echo</span> <span class="variable">$hello</span>-<span class="built_in">test</span></span><br><span class="line">world-test</span><br><span class="line">➜ <span class="built_in">echo</span> <span class="variable">$&#123;hello-test&#125;</span></span><br><span class="line">world</span><br><span class="line">➜ <span class="built_in">unset</span> hello </span><br><span class="line">➜ <span class="built_in">echo</span> <span class="variable">$&#123;hello-test&#125;</span></span><br><span class="line"><span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="变量自增"><a href="#变量自增" class="headerlink" title="变量自增"></a>变量自增</h3><p><code>let i++</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">➜ i=1</span><br><span class="line">➜ <span class="built_in">echo</span> <span class="variable">$i</span></span><br><span class="line">1</span><br><span class="line">➜ <span class="built_in">let</span> i++</span><br><span class="line">➜ <span class="built_in">echo</span> <span class="variable">$i</span></span><br><span class="line">2</span><br></pre></td></tr></table></figure>
+
+<h2 id="shell条件测试"><a href="#shell条件测试" class="headerlink" title="shell条件测试"></a>shell条件测试</h2><h3 id="文件测试"><a href="#文件测试" class="headerlink" title="文件测试"></a>文件测试</h3><p><code>test -d /backup</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">➜ <span class="built_in">test</span> -d /backup</span><br><span class="line">➜ <span class="built_in">echo</span> $?</span><br><span class="line">1</span><br><span class="line">➜ <span class="built_in">test</span> -d /backup || <span class="built_in">mkdir</span> -p /backup</span><br><span class="line"><span class="comment"># 这样就可以通过检测有没有此文件夹来判断是否创建文件夹</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="数值比较"><a href="#数值比较" class="headerlink" title="数值比较"></a>数值比较</h3><h3 id="字符串比较"><a href="#字符串比较" class="headerlink" title="字符串比较"></a>字符串比较</h3>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/05/31/2021-05-31-%E9%9D%A2%E8%AF%95%E8%AF%95%E9%A2%98%E6%B1%87%E6%80%BB/" rel="prev" title="面试试题汇总">
+      <i class="fa fa-chevron-left"></i> 面试试题汇总
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/06/14/2021-06-15-idea%E9%BB%98%E8%AE%A4gitignore%E6%96%87%E4%BB%B6/" rel="next" title="idea默认gitignore文件">
+      idea默认gitignore文件 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFshell%E8%84%9A%E6%9C%AC%EF%BC%88%E9%9C%80%E8%A6%81%E8%A7%A3%E9%87%8A%E5%99%A8%E8%A7%A3%E9%87%8A%EF%BC%89"><span class="nav-number">1.1.</span> <span class="nav-text">什么是shell脚本（需要解释器解释）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#shell%E8%84%9A%E6%9C%AC%E8%83%BD%E5%81%9A%E4%BB%80%E4%B9%88"><span class="nav-number">1.2.</span> <span class="nav-text">shell脚本能做什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#shell%E6%8A%80%E8%83%BD"><span class="nav-number">1.3.</span> <span class="nav-text">shell技能</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#shell%E8%84%9A%E6%9C%AC%E6%A6%82%E8%BF%B0"><span class="nav-number">2.</span> <span class="nav-text">shell脚本概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%84%9A%E6%9C%AC%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A0%BC%E5%BC%8F"><span class="nav-number">2.1.</span> <span class="nav-text">脚本的基本格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%84%9A%E6%9C%AC%E7%9A%84%E6%89%A7%E8%A1%8C%E6%96%B9%E5%BC%8F"><span class="nav-number">2.2.</span> <span class="nav-text">脚本的执行方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#shell%E8%84%9A%E6%9C%AC%E7%9A%84%E7%89%B9%E6%80%A7"><span class="nav-number">2.3.</span> <span class="nav-text">shell脚本的特性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#shell%E8%84%9A%E6%9C%AC%E5%8F%98%E9%87%8F"><span class="nav-number">3.</span> <span class="nav-text">shell脚本变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%98%E9%87%8F%E5%B8%B8%E8%A7%81%E7%B1%BB%E5%9E%8B"><span class="nav-number">3.1.</span> <span class="nav-text">变量常见类型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8F%98%E9%87%8F"><span class="nav-number">3.1.1.</span> <span class="nav-text">自定义变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">3.1.2.</span> <span class="nav-text">环境变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%8D%E7%BD%AE%E5%8F%82%E6%95%B0%E5%8F%98%E9%87%8F"><span class="nav-number">3.1.3.</span> <span class="nav-text">位置参数变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A2%84%E5%85%88%E5%AE%9A%E4%B9%89%E5%8F%98%E9%87%8F"><span class="nav-number">3.1.4.</span> <span class="nav-text">预先定义变量</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%98%E9%87%8F%E8%B5%8B%E5%80%BC%E6%96%B9%E5%BC%8F"><span class="nav-number">3.2.</span> <span class="nav-text">变量赋值方式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%98%BE%E5%BC%8F%E8%B5%8B%E5%80%BC%EF%BC%88%E5%8F%98%E9%87%8F%E5%90%8D-%E5%8F%98%E9%87%8F%E5%80%BC%EF%BC%89"><span class="nav-number">3.2.1.</span> <span class="nav-text">显式赋值（变量名&#x3D;变量值）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#read%E4%BB%8E%E9%94%AE%E7%9B%98%E8%AF%BB%E5%85%A5%E5%8F%98%E9%87%8F%E5%80%BC"><span class="nav-number">3.2.2.</span> <span class="nav-text">read从键盘读入变量值</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">3.2.3.</span> <span class="nav-text">注意事项</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%98%E9%87%8F%E6%95%B0%E5%80%BC%E8%BF%90%E7%AE%97"><span class="nav-number">3.3.</span> <span class="nav-text">变量数值运算</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B4%E6%95%B0%E8%BF%90%E7%AE%97"><span class="nav-number">3.3.1.</span> <span class="nav-text">整数运算</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%8F%E6%95%B0%E8%BF%90%E7%AE%97bc"><span class="nav-number">3.3.2.</span> <span class="nav-text">小数运算bc</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%98%E9%87%8F%E6%9B%BF%E4%BB%A3"><span class="nav-number">3.4.</span> <span class="nav-text">变量替代</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%98%E9%87%8F%E8%87%AA%E5%A2%9E"><span class="nav-number">3.5.</span> <span class="nav-text">变量自增</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#shell%E6%9D%A1%E4%BB%B6%E6%B5%8B%E8%AF%95"><span class="nav-number">4.</span> <span class="nav-text">shell条件测试</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E6%B5%8B%E8%AF%95"><span class="nav-number">4.1.</span> <span class="nav-text">文件测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E5%80%BC%E6%AF%94%E8%BE%83"><span class="nav-number">4.2.</span> <span class="nav-text">数值比较</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%AF%94%E8%BE%83"><span class="nav-number">4.3.</span> <span class="nav-text">字符串比较</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Yangself"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Yangself</p>
+  <div class="site-description" itemprop="description">分享微不足道的经验，记录稀奇古怪的玩意</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yangself666" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yangself666" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:yangself666@qq.com" title="E-Mail → mailto:yangself666@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://refactoringguru.cn/design-patterns" title="https:&#x2F;&#x2F;refactoringguru.cn&#x2F;design-patterns" rel="noopener" target="_blank">设计模式</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">冀ICP备19030838号-1 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Yangself</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
