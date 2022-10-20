@@ -50,6 +50,8 @@ favicon:
 # Show multilingual switcher in footer.
 language_switcher: false
 
+html_title: 扬仔的技术分享
+
 footer:
   # Specify the date when the site was setup. If not defined, current year will be used.
   since: 2021
@@ -426,12 +428,6 @@ font:
 
   # Font settings for site title (.site-title).
   title:
-    external: true
-    family:
-    size:
-
-  # Font settings for site html_title (.site-title).
-  html_title:
     external: true
     family:
     size:
