@@ -430,6 +430,12 @@ font:
     family:
     size:
 
+  # Font settings for site html_title (.site-title).
+  html_title:
+    external: true
+    family:
+    size:
+
   # Font settings for headlines (<h1> to <h6>).
   headings:
     external: true
